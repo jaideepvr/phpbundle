@@ -1,0 +1,20 @@
+{
+    "name": "gvs/phpbundle",
+    "description": "This is a php based js script file bundling composer package. Including this package into php project will allow the javascript files to be delivered to client as a bundle or individually",
+    "keywords": ["bundling", "minification", "php"],
+    "license": "MIT",
+    "version": "0.0.1",
+    "authors": [
+    	{
+    		"name": "Jaideep Vinakota",
+    		"email": "jaideepvr@gmail.com",
+    		"role": "Developer"
+    	}
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+    	"classmap": ["src/"]
+    }
+}
