@@ -1,8 +1,6 @@
 <?php
 
 	namespace Gvs;
-
-    require_once "./FileBundle.php";
     
     class ScriptBundle extends \Gvs\FileBundle {
         
