@@ -39,4 +39,15 @@
             return "<script type='text/javascript' src='{$file}'></script>";
         }
         
+        /// Purpose(minifyFile):
+        ///    Minifes the js script file in place using the 3rd party composer package(matthiasmullie/minify)
+        protected function minifyFile($rootFolder, $fileName, $minFileName) {
+        	$filePath = "{$rootFolder}{$fileName}";
+        	$minFilePath = "{$rootFolder}{$minFileName}";
+        	$minifier = new \MatthiasMullie\Minify\JS($filePath);
+        	
+        	$minContent = $minifier->minify($minFilePath);
+        	return ($minContent != "");
+        }
+        
     }
