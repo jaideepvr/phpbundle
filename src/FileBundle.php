@@ -131,14 +131,13 @@
                 }
                 $filePath = "{$rootFolder}{$useFileName}";
                 $scriptContent = file_get_contents($filePath);
-                $content = $content . $scriptContent;
+                $content = $content . $scriptContent . $this->getContentSeparator();
             }
             
             if ($echo) {
             	echo $content;
-            } else {
-            	return $content;
             }
+            return $content;
         }
         
         /// Purpose(extractFilesFromParam):
@@ -189,6 +188,12 @@
         	}
         	
         	return $minFileName;
+        }
+        
+        /// Purpose(getContentSeparator):
+        ///    Returns the content separator to be used to separate contents
+        protected function getContentSeparator() {
+        	return "";
         }
 
         abstract protected function minifyFile($rootFolder, $fileName, $minFileName);

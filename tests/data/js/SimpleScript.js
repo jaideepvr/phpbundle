@@ -16,4 +16,17 @@ function alertUser(var mode) {
 	}
 	alert(mode);
 	alert(message); // alert the user with the updated message
-}
+};
+
+var EmployeeClass = {
+	
+	this._employeeId;
+	this._firstName = "";
+	this._lastName = "";
+	
+	this.toString = function() {
+		return this._employeeId . "~" . this._firstName . "~" . this._lastName;
+	};
+	
+	return this;
+};

@@ -49,5 +49,11 @@
         	$minContent = $minifier->minify($minFilePath);
         	return ($minContent != "");
         }
+
+        /// Purpose(getContentSeparator):
+        ///    Returns the content separator to be used to separate contents
+        protected function getContentSeparator() {
+        	return ";";
+        }
         
     }
