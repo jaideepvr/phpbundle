@@ -187,7 +187,7 @@
 	        	if (!$minifyStatus) {
 	        		$minFileName = $fileName;
 	        	}
-        	} catch (Exception $e) {
+        	} catch (\Exception $e) {
         		$minFileName = $fileName;
         	}
         	
