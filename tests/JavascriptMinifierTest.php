@@ -21,12 +21,12 @@
 			$this->assertTrue(true);
 		}
 		
-		static function main() {
+		/* static function main() {
 			$suite = new PHPUnit\Framework\TestSuite( __CLASS__);
 			PHPUnit\TextUI\TestRunner::run( $suite);
-		}
+		} */
 		
 	}
 
-JavascriptMiniferTest::main();
+//JavascriptMiniferTest::main();
 	

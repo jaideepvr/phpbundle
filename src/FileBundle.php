@@ -182,8 +182,12 @@
         	$srcPath = "{$rootFolder}{$fileName}";
         	$minPath = "{$rootFolder}{$minFileName}";
         	
-            $minifyStatus = $this->minifyFile($rootFolder, $fileName, $minFileName);
-        	if (!$minifyStatus) {
+        	try {
+	            $minifyStatus = $this->minifyFile($rootFolder, $fileName, $minFileName);
+	        	if (!$minifyStatus) {
+	        		$minFileName = $fileName;
+	        	}
+        	} catch (Exception $e) {
         		$minFileName = $fileName;
         	}
         	
