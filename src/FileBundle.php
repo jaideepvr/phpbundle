@@ -1,6 +1,6 @@
 <?php
 
-	namespace Gvs;
+    namespace Gvs;
 
     abstract class FileBundle {
         
@@ -73,7 +73,8 @@
             if ($this->_bundleFiles) {
                 $filesString = "f=" . implode(",", $this->_files);
                 $timeString = "t=" . time();
-                $infoStr = base64_encode($timeString . "&" . $filesString);
+                $minifyString = "m=" . $this->_autoMinify ? "1" : "0";
+                $infoStr = base64_encode($timeString . "&" . $filesString . "&" . $minifyString);
                 array_push($scriptLines, $this->generateHtmlForBundleFile($infoStr));
             } else {
                 foreach ($this->_files as $file) {
@@ -91,15 +92,16 @@
         }
         
         public function getTokenForFiles() {
-        	$filesString = "f=" . implode(",", $this->_files);
-        	$timeString = "t=" . time();
-        	$infoStr = base64_encode($timeString . "&" . $filesString);
-        	
-        	return $infoStr;
+            $filesString = "f=" . implode(",", $this->_files);
+            $timeString = "t=" . time();
+            $minifyString = "m=" . $this->_autoMinify ? "1" : "0";
+            $infoStr = base64_encode($timeString . "&" . $filesString . "&" . $minifyString);
+
+            return $infoStr;
         }
         
         private function generateScriptTags($script) {
-        	echo $script;
+            echo $script;
         }
         
         /// Purpose(generateBundledScript):
@@ -107,6 +109,11 @@
         ///    should initiate the script generation request to generate the actual script.
         public function generateBundledScript($param, $echo = true) {
             $files = $this->extractFilesFromParam($param);
+            $minifyEnabled = $this->isMinificationEnabled($param);
+            if ($minifyEnabled != "-1") {
+                $this->_useMinifyIfAvailable = ($minifyEnabled == "1");
+                $this->_autoMinify = ($minifyEnabled == "1");
+            }
             $rootFolder = $this->_applicationRootFolder;
             $content = "";
             
@@ -121,13 +128,13 @@
                 $useFileName = $file;
                 $minFileName = $this->getMinifiedFileNameIfExists($rootFolder, $file);
                 if ($this->_useMinifyIfAvailable) {
-                	if ($minFileName !== "") {
-                		$useFileName = $minFileName;
-                	} else {
-                		if ($this->_autoMinify) {
-                			$useFileName = $this->generateMinifiedFile($rootFolder, $file);
-                		}
-                	}
+                    if ($minFileName !== "") {
+                            $useFileName = $minFileName;
+                    } else {
+                        if ($this->_autoMinify) {
+                            $useFileName = $this->generateMinifiedFile($rootFolder, $file);
+                        }
+                    }
                 }
                 $filePath = "{$rootFolder}{$useFileName}";
                 $scriptContent = file_get_contents($filePath);
@@ -140,15 +147,44 @@
             return $content;
         }
         
+        /// Purpose(minifyFiles):
+        ///    Minifies all the files provided and returns the number of files successfully minified
+        public function minifyFiles() {
+            $rootFolder = $this->_applicationRootFolder;
+            $minCount = 0;
+            foreach ($this->_files as $file) {
+                $minFileName = $this->generateMinifiedFile($rootFolder, $file);
+                if ($file != $minFileName) {
+                    ++$minCount;
+                }
+            }
+            
+            return $minCount;
+        }
+        
         /// Purpose(extractFilesFromParam):
         ///    Decodes the parameter and extracts the list of file names to be bundled/minifed
         private function extractFilesFromParam($param) {
             $originalQuery = base64_decode($param);
-            list($t, $f) = explode("&", $originalQuery);
+            list($t, $f, $m) = explode("&", $originalQuery);
             list($key, $fileStr) = explode("=", $f);
             $files = explode(",", $fileStr);
             
             return $files;
+        }
+        
+        /// Purpose(isMinifyEnabled):
+        ///    Decodes the parameter and determines if minification is enabled or not
+        private function isMinificationEnabled($param) {
+            $originalQuery = base64_decode($param);
+            list($t, $f, $m) = explode("&", $originalQuery);
+            $minifyEnabled = "-1";
+            if ($m) {
+                list($key, $value) = explode("=", $m);
+                $minifyEnabled = $value;
+            }
+            
+            return $minifyEnabled;
         }
         
         /// Purpose(getMinifiedFileNameIfExists):
@@ -167,37 +203,37 @@
         /// Purpose(getMinifiedFileName):
         ///    Prepares the min file name from the original file name and returns the same
         protected function getMinifiedFileName($fileName) {
-        	$parts = explode(".", $fileName);
-        	$index = sizeof($parts);
-        	$parts[$index] = $parts[$index-1];
-        	$parts[$index-1] = "min";
-        	
-        	return implode(".", $parts);
+            $parts = explode(".", $fileName);
+            $index = sizeof($parts);
+            $parts[$index] = $parts[$index-1];
+            $parts[$index-1] = "min";
+
+            return implode(".", $parts);
         }
         
         /// Purpose(minifyFile):
         ///    Minifies the file and generates the corresponding .min.<ext> file 
         private function generateMinifiedFile($rootFolder, $fileName) {
-        	$minFileName = $this->getMinifiedFileName($fileName);
-        	$srcPath = "{$rootFolder}{$fileName}";
-        	$minPath = "{$rootFolder}{$minFileName}";
-        	
-        	try {
-	            $minifyStatus = $this->minifyFile($rootFolder, $fileName, $minFileName);
-	        	if (!$minifyStatus) {
-	        		$minFileName = $fileName;
-	        	}
-        	} catch (\Exception $e) {
-        		$minFileName = $fileName;
-        	}
-        	
-        	return $minFileName;
+            $minFileName = $this->getMinifiedFileName($fileName);
+            $srcPath = "{$rootFolder}{$fileName}";
+            $minPath = "{$rootFolder}{$minFileName}";
+
+            try {
+                $minifyStatus = $this->minifyFile($rootFolder, $fileName, $minFileName);
+                if (!$minifyStatus) {
+                    $minFileName = $fileName;
+                }
+            } catch (\Exception $e) {
+                $minFileName = $fileName;
+            }
+
+            return $minFileName;
         }
         
         /// Purpose(getContentSeparator):
         ///    Returns the content separator to be used to separate contents
         protected function getContentSeparator() {
-        	return "";
+            return "";
         }
 
         abstract protected function minifyFile($rootFolder, $fileName, $minFileName);

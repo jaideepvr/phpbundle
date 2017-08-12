@@ -1,6 +1,6 @@
 <?php
 
-	namespace Gvs;
+    namespace Gvs;
     
     class ScriptBundle extends \Gvs\FileBundle {
         
