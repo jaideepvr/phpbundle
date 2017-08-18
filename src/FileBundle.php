@@ -73,7 +73,7 @@
             if ($this->_bundleFiles) {
                 $filesString = "f=" . implode(",", $this->_files);
                 $timeString = "t=" . time();
-                $minifyString = "m=" . $this->_autoMinify ? "1" : "0";
+                $minifyString = "m=" . ($this->_autoMinify ? "1" : "0");
                 $infoStr = base64_encode($timeString . "&" . $filesString . "&" . $minifyString);
                 array_push($scriptLines, $this->generateHtmlForBundleFile($infoStr));
             } else {
@@ -94,7 +94,7 @@
         public function getTokenForFiles() {
             $filesString = "f=" . implode(",", $this->_files);
             $timeString = "t=" . time();
-            $minifyString = "m=" . $this->_autoMinify ? "1" : "0";
+            $minifyString = "m=" . ($this->_autoMinify ? "1" : "0");
             $infoStr = base64_encode($timeString . "&" . $filesString . "&" . $minifyString);
 
             return $infoStr;
