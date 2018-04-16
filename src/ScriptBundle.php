@@ -53,7 +53,7 @@
         /// Purpose(getContentSeparator):
         ///    Returns the content separator to be used to separate contents
         protected function getContentSeparator() {
-        	return ";";
+        	return ";\n\n";
         }
         
     }
